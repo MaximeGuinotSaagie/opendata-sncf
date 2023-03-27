@@ -19,6 +19,12 @@ s3 = boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secr
 df = pd.read_csv(f's3://{bucket}/objets-trouves-restitution.csv')
 #df = pd.read_csv(io.StringIO(csv_obj))
 
+# Compute the size of each group of stations
+size = df.groupby('fields.gc_obo_gare_origine_r_name').size().reset_index(name='size')
+
+# Merge the size information with the original DataFrame
+df = pd.merge(df, size, on='fields.gc_obo_gare_origine_r_name')
+
 # Create the Dash app
 app = dash.Dash(__name__)
 
@@ -48,7 +54,7 @@ def update_map(click_data):
                             hover_name='fields.gc_obo_gare_origine_r_name', 
                             zoom=3, 
                             height=600,
-                            size=10,
+                            size='size',
                             color='fields.gc_obo_type_c',
                             mapbox_style='open-street-map')
     fig.update_layout(transition_duration=500)
