@@ -48,7 +48,7 @@ def update_map(click_data):
                             hover_name='fields.gc_obo_gare_origine_r_name', 
                             zoom=3, 
                             height=600,
-                            size='size',
+                            size=10,
                             color='fields.gc_obo_type_c',
                             mapbox_style='open-street-map')
     fig.update_layout(transition_duration=500)
