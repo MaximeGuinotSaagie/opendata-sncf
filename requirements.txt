@@ -1,4 +1,4 @@
-dash==2.0.0
+dash==2.7.0
 dash-core-components==2.7.0
 dash-html-components==2.7.0
 pandas==1.5.3
