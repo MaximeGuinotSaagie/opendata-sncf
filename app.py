@@ -10,8 +10,8 @@ import os
 
 # Connect to S3 bucket
 bucket = "tnb-cust11"
-access_key="AKIA5OVBSQSKYHJA3XUO"
-secret_key="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"
+access_key=os.environ["AWS_ACCESS_KEY_ID"]
+secret_key=os.environ["AWS_SECRET_ACCESS_KEY"]
 
 s3 = boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secret_key)
 # Download the csv file
