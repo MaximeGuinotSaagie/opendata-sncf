@@ -3,6 +3,7 @@ from dash import dcc
 from dash import html
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objs as go
 from dash.dependencies import Input, Output
 import boto3
 import io
@@ -47,6 +48,7 @@ app.layout = html.Div([
     Output('map-graph', 'figure'),
     Input('map-graph', 'clickData')
 )
+
 def update_map(click_data):
     fig = px.scatter_mapbox(df, 
                             lat='latitude', 
@@ -55,15 +57,43 @@ def update_map(click_data):
                             zoom=3, 
                             height=600,
                             size='size',
-                            color='fields.gc_obo_type_c',
+                            color='size', # Use 'size' to color the points by the number of items lost
+                            color_continuous_scale='Blues', # Use a blue color scale for the color gradient
                             mapbox_style='open-street-map')
+
+    # Set the color bar title to 'Items Lost'
+    fig.update_layout(coloraxis_colorbar=dict(title='Items Lost'))
+
+    # Use a custom hover template to remove the latitude and longitude information
+    fig.update_traces(hovertemplate='<b>%{hovertext}</b><br>Items Lost: %{marker.size}<extra></extra>')
+
+    # Hide the legend
+    fig.update_layout(showlegend=False)
+
+    # Increase the left and right margins to make the map wider
+    fig.update_layout(margin=dict(l=0, r=0))
+
+    # Add a background color to the map
+    fig.update_layout(mapbox=dict(style='stamen-terrain', bgcolor='#f8f8f8'))
+
+    # Add a circle around the selected point
+    if click_data is not None:
+        lat = click_data['points'][0]['lat']
+        lon = click_data['points'][0]['lon']
+        fig.add_trace(go.Scattermapbox(
+            mode='markers+text',
+            lat=[lat],
+            lon=[lon],
+            marker=dict(size=15, color='red'),
+            text=['Selected Point'],
+            textposition='bottom right'
+        ))
+
+    # Set the transition duration to 500 milliseconds
     fig.update_layout(transition_duration=500)
-    fig.update_layout(showlegend=False)  # Remove the legend
-    fig.update_layout(mapbox_style='open-street-map', mapbox=dict(center=dict(lat=48.85, lon=2.35), zoom=10))  # Set the default map position and zoom level
-    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})  # Remove the margin
-    fig.update_layout(width=900)  # Increase the width of the map
-    fig.update_traces(hovertemplate=None)  # Remove the latitude and longitude when hovering over the points
+
     return fig
+
 
 
 if __name__ == '__main__':
