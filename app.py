@@ -9,7 +9,7 @@ import io
 import os
 
 # Create the Dash app and define the external stylesheet
-external_stylesheets = ['style.css']
+external_stylesheets = ['./style.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 # Connect to S3 bucket
