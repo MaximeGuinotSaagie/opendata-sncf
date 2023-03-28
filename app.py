@@ -30,41 +30,71 @@ df = pd.merge(df, size, on='fields.gc_obo_gare_origine_r_name')
 app = dash.Dash(__name__)
 
 # Define the app layout
-app.layout = html.Div([
-    html.H1('Lost and Found Records'),
-    html.Div([
-        html.H2('Statistics'),
-        html.P(f'Total records: {len(df)}'),
-        html.P(f'Total unique stations: {len(df["fields.gc_obo_gare_origine_r_name"].unique())}'),
-        html.P(f'Total unique types: {len(df["fields.gc_obo_type_c"].unique())}')
-    ], style={'width': '40%', 'display': 'inline-block', 'vertical-align': 'top'}),
-    html.Div([
-        dcc.Graph(id='map-graph')
-    ], style={'width': '60%', 'display': 'inline-block'})
-])
+app.layout = html.Div(
+    className="container",
+    children=[
+        html.H1("Lost and Found Records"),
+        html.Div(
+            className="stats-container",
+            children=[
+                html.H2("Statistics"),
+                html.Div(
+                    className="stat-item",
+                    children=[
+                        html.P(f"{len(df)}"),
+                        html.P("Total Records"),
+                    ],
+                ),
+                html.Div(
+                    className="stat-item",
+                    children=[
+                        html.P(f"{len(df['fields.gc_obo_gare_origine_r_name'].unique())}"),
+                        html.P("Total Unique Stations"),
+                    ],
+                ),
+                html.Div(
+                    className="stat-item",
+                    children=[
+                        html.P(f"{len(df['fields.gc_obo_type_c'].unique())}"),
+                        html.P("Total Unique Types"),
+                    ],
+                ),
+            ],
+        ),
+        html.Div(
+            className="map-container",
+            children=[
+                dcc.Graph(id="map-graph"),
+            ],
+        ),
+    ],
+)
 
 
 # Define the map graph
 @app.callback(
-    Output('map-graph', 'figure'),
-    Input('map-graph', 'clickData')
+    Output("map-graph", "figure"),
+    Input("map-graph", "clickData"),
 )
 def update_map(click_data):
-    fig = px.scatter_mapbox(df, 
-                            lat='latitude', 
-                            lon='longitude', 
-                            hover_name='fields.gc_obo_gare_origine_r_name', 
-                            zoom=3, 
-                            height=600,
-                            size='size',
-                            color='size',
-                            color_continuous_scale=px.colors.sequential.Blues_r,
-                            mapbox_style='open-street-map')
+    fig = px.scatter_mapbox(
+        df,
+        lat="latitude",
+        lon="longitude",
+        hover_name="fields.gc_obo_gare_origine_r_name",
+        zoom=3,
+        height=600,
+        size="size",
+        color="nb_objects",
+        color_continuous_scale=px.colors.sequential.Blues_r,
+        mapbox_style="open-street-map",
+    )
     fig.update_layout(transition_duration=500)
-    fig.update_layout(coloraxis_colorbar=dict(title='Number of Objects'))
+    fig.update_layout(coloraxis_colorbar=dict(title="Number of Objects"))
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
     fig.update_layout(showlegend=False)
     return fig
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+
+if __name__ == "__main__":
+    app.run_server(debug=True)
