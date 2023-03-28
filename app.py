@@ -79,7 +79,7 @@ app.layout = html.Div(
                 html.Div(
                     className="stat-item",
                     children=[
-                        html.P(f"Données depuis {df['record_timestamp'].min():%d-%m-%Y}"),
+                        html.P(f"Données depuis {df['record_timestamp'].min().strftime('%d-%m-%Y %H:%M:%S.%f')[:-3]}"),
                         html.P(""),
                     ],
                 ),
@@ -116,7 +116,7 @@ def update_map(click_data):
         height=600,
         size="size",
         color="size",
-        color_continuous_scale=px.colors.sequential.Blues_r,
+        color_continuous_scale=bluered,
         mapbox_style="open-street-map",
     )
     fig.update_layout(transition_duration=500)
