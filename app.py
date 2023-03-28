@@ -63,6 +63,7 @@ app.layout = html.Div(
             className="stats-container",
             children=[
                 html.Div(
+                    id="total-records",
                     className="stat-item",
                     children=[
                         html.P(f"{len(df)}"),
@@ -70,6 +71,7 @@ app.layout = html.Div(
                     ],
                 ),
                 html.Div(
+                    id="total-stations",
                     className="stat-item",
                     children=[
                         html.P(f"{len(df['fields.gc_obo_gare_origine_r_name'].unique())}"),
@@ -77,13 +79,15 @@ app.layout = html.Div(
                     ],
                 ),
                 html.Div(
+                    id="data-since",
                     className="stat-item",
                     children=[
-                        html.P(f"Données depuis {df['record_timestamp'].min().strftime('%d-%m-%Y %H:%M:%S.%f')[:-3]}"),
+                        html.P(f"Données depuis {df['record_timestamp'].min()[:10]}"),
                         html.P(""),
                     ],
                 ),
                 html.Div(
+                    id="max-objects-station",
                     className="stat-item",
                     children=[
                         html.P(f"{df.groupby('fields.gc_obo_gare_origine_r_name').size().idxmax()}"),
@@ -101,29 +105,72 @@ app.layout = html.Div(
     ],
 )
 
+
 # Define the map graph
 @app.callback(
-    Output("map-graph", "figure"),
-    Input("map-graph", "clickData"),
+    [Output("stats-container", "children"),
+     Output("map-graph", "figure")],
+    Input("map-graph", "clickData")
 )
-def update_map(click_data):
-    fig = px.scatter_mapbox(
-        df,
-        lat="latitude",
-        lon="longitude",
-        hover_name="fields.gc_obo_gare_origine_r_name",
-        zoom=3,
-        height=600,
-        size="size",
-        color="size",
-        color_continuous_scale=bluered,
-        mapbox_style="open-street-map",
-    )
-    fig.update_layout(transition_duration=500)
-    fig.update_layout(coloraxis_colorbar=dict(title="Number of Objects"))
-    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
-    fig.update_layout(showlegend=False)
-    return fig
+def update_stats_and_map(click_data):
+    if click_data:
+        selected_gare = click_data["points"][0]["hovertext"]
+        selected_df = df[df["fields.gc_obo_gare_origine_r_name"] == selected_gare]
+
+        # Update the statistics div
+        stats = [
+            html.Div(
+                className="stat-item",
+                children=[
+                    html.P(f"{len(selected_df)}"),
+                    html.P("Nombre de lignes"),
+                ],
+            ),
+            html.Div(
+                className="stat-item",
+                children=[
+                    html.P(f"{len(selected_df['fields.gc_obo_gare_origine_r_name'].unique())}"),
+                    html.P("Nombre de gares"),
+                ],
+            ),
+            html.Div(
+                className="stat-item",
+                children=[
+                    html.P(f"Données depuis {df['record_timestamp'].min()[:10]}"),
+                    html.P(""),
+                ],
+            ),
+            html.Div(
+                className="stat-item",
+                children=[
+                    html.P(f"{selected_df.groupby('fields.gc_obo_gare_origine_r_name').size().idxmax()}"),
+                    html.P("Gare avec le plus grand nombre d'objets trouvés"),
+                ],
+            ),
+        ]
+
+        # Update the map figure
+        fig = px.scatter_mapbox(
+            selected_df,
+            lat="latitude",
+            lon="longitude",
+            hover_name="fields.gc_obo_gare_origine_r_name",
+            zoom=10,
+            height=600,
+            size="size",
+            color="size",
+            color_continuous_scale=bluered,
+            mapbox_style="open-street-map",
+        )
+        fig.update_layout(transition_duration=500)
+        fig.update_layout(coloraxis_colorbar=dict(title="Number of Objects"))
+        fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+        fig.update_layout(showlegend=False)
+
+        return stats, fig
+    else:
+        return None, None
+
 
 
 if __name__ == '__main__':
