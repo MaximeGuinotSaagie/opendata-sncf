@@ -85,7 +85,7 @@ def update_map(click_data):
         zoom=3,
         height=600,
         size="size",
-        color="nb_objects",
+        color="size",
         color_continuous_scale=px.colors.sequential.Blues_r,
         mapbox_style="open-street-map",
     )
