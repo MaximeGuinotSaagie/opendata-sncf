@@ -101,4 +101,4 @@ def update_map(click_data):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8050)
+     app.run(host='0.0.0.0', debug=True)
