@@ -31,14 +31,11 @@ app = dash.Dash(__name__)
 
 # Define the app layout
 app.layout = html.Div(
+    className="container",
     children=[
-        html.Head(
-            children=[
-                html.Link(
-                    rel='stylesheet',
-                    href='style.css'
-                )
-            ]
+        html.Link(
+            rel='stylesheet',
+            href='style.css'
         ),
         html.H1("Lost and Found Records"),
         html.Div(
@@ -104,4 +101,4 @@ def update_map(click_data):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run_server(debug=True, port=8050)
