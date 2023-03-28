@@ -58,7 +58,13 @@ def update_map(click_data):
                             color='fields.gc_obo_type_c',
                             mapbox_style='open-street-map')
     fig.update_layout(transition_duration=500)
+    fig.update_layout(showlegend=False)  # Remove the legend
+    fig.update_layout(mapbox_style='open-street-map', mapbox=dict(center=dict(lat=48.85, lon=2.35), zoom=10))  # Set the default map position and zoom level
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})  # Remove the margin
+    fig.update_layout(width=900)  # Increase the width of the map
+    fig.update_traces(hovertemplate=None)  # Remove the latitude and longitude when hovering over the points
     return fig
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
