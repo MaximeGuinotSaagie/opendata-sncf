@@ -58,7 +58,7 @@ def update_map(click_data):
                             height=600,
                             size='size',
                             color='nb_objects',
-                            color_continuous_scale=px.colors.sequential.Blues_r.reversed(),
+                            color_continuous_scale=px.colors.sequential.Blues_r,
                             mapbox_style='open-street-map')
     fig.update_layout(transition_duration=500)
     fig.update_layout(coloraxis_colorbar=dict(title='Number of Objects'))
