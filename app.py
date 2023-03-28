@@ -8,9 +8,35 @@ import boto3
 import io
 import os
 
-# Create the Dash app and define the external stylesheet
-external_stylesheets = ['./style.css']
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+# Define the styles inline
+styles = {
+    'container': {
+        'margin': 'auto',
+        'max-width': '800px',
+        'font-family': 'Arial, sans-serif',
+    },
+    'header': {
+        'font-size': '36px',
+        'font-weight': 'bold',
+        'text-align': 'center',
+        'margin-bottom': '50px',
+    },
+    'stat-item': {
+        'text-align': 'center',
+        'margin': '0 50px',
+        'display': 'inline-block',
+        'width': '200px',
+        'border': '1px solid #ddd',
+        'padding': '10px',
+        'border-radius': '10px',
+    },
+    'map-container': {
+        'height': '600px',
+    },
+}
+
+# Create the Dash app
+app = dash.Dash(__name__)
 
 # Connect to S3 bucket
 bucket = "tnb-cust11"
@@ -22,38 +48,35 @@ s3 = boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secr
 # Download the csv file
 df = pd.read_csv(f's3://{bucket}/objets-trouves-restitution.csv')
 
-
 # Compute the size of each group of stations
 size = df.groupby('fields.gc_obo_gare_origine_r_name').size().reset_index(name='size')
 
 # Merge the size information with the original DataFrame
 df = pd.merge(df, size, on='fields.gc_obo_gare_origine_r_name')
 
-
 # Define the app layout
 app.layout = html.Div(
-    className="container",
+    style=styles['container'],
     children=[
-        html.H1("Lost and Found Records"),
+        html.H1("Lost and Found Records", style=styles['header']),
         html.Div(
-            className="stats-container",
             children=[
                 html.Div(
-                    className="stat-item",
+                    style=styles['stat-item'],
                     children=[
                         html.P(f"{len(df)}"),
                         html.P("Total Records"),
                     ],
                 ),
                 html.Div(
-                    className="stat-item",
+                    style=styles['stat-item'],
                     children=[
                         html.P(f"{len(df['fields.gc_obo_gare_origine_r_name'].unique())}"),
                         html.P("Total Unique Stations"),
                     ],
                 ),
                 html.Div(
-                    className="stat-item",
+                    style=styles['stat-item'],
                     children=[
                         html.P(f"{len(df['fields.gc_obo_type_c'].unique())}"),
                         html.P("Total Unique Types"),
@@ -62,14 +85,13 @@ app.layout = html.Div(
             ],
         ),
         html.Div(
-            className="map-container",
+            style=styles['map-container'],
             children=[
                 dcc.Graph(id="map-graph"),
             ],
         ),
     ],
 )
-
 
 # Define the map graph
 @app.callback(
