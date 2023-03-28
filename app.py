@@ -174,8 +174,3 @@ def update_stats_and_map(click_data):
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
 
-
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
