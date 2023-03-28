@@ -46,7 +46,8 @@ secret_key=os.environ["AWS_SECRET_ACCESS_KEY"]
 s3 = boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secret_key)
 
 # Download the csv file
-df = pd.read_csv(f's3://{bucket}/objets-trouves-restitution.csv')
+obj = s3.get_object(Bucket=bucket, Key="objets-trouves-restitution.csv")
+df = pd.read_csv(io.BytesIO(obj['Body'].read()), encoding='utf8')
 
 # Compute the size of each group of stations
 size = df.groupby('fields.gc_obo_gare_origine_r_name').size().reset_index(name='size')
@@ -104,7 +105,6 @@ app.layout = html.Div(
         ),
     ],
 )
-
 
 # Define the map graph
 @app.callback(
@@ -170,6 +170,10 @@ def update_stats_and_map(click_data):
         return stats, fig
     else:
         return None, None
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True)
+
 
 
 
