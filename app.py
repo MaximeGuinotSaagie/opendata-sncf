@@ -50,7 +50,7 @@ app.layout = html.Div([
     Input('map-graph', 'clickData')
 )
 def update_map(click_data):
-    fig = px.scatter_mapbox(grouped_df, 
+    fig = px.scatter_mapbox(df, 
                             lat='latitude', 
                             lon='longitude', 
                             hover_name='fields.gc_obo_gare_origine_r_name', 
