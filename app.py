@@ -3,7 +3,6 @@ from dash import dcc
 from dash import html
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objs as go
 from dash.dependencies import Input, Output
 import boto3
 import io
@@ -33,14 +32,14 @@ app = dash.Dash(__name__)
 app.layout = html.Div([
     html.H1('Lost and Found Records'),
     html.Div([
+        dcc.Graph(id='map-graph')
+    ], style={'width': '100%', 'display': 'inline-block'}),
+    html.Div([
         html.H2('Statistics'),
         html.P(f'Total records: {len(df)}'),
         html.P(f'Total unique stations: {len(df["fields.gc_obo_gare_origine_r_name"].unique())}'),
         html.P(f'Total unique types: {len(df["fields.gc_obo_type_c"].unique())}')
-    ], style={'width': '40%', 'display': 'inline-block', 'vertical-align': 'top'}),
-    html.Div([
-        dcc.Graph(id='map-graph')
-    ], style={'width': '60%', 'display': 'inline-block'})
+    ], style={'width': '100%', 'display': 'inline-block', 'text-align': 'center'})
 ])
 
 # Define the map graph
@@ -48,7 +47,6 @@ app.layout = html.Div([
     Output('map-graph', 'figure'),
     Input('map-graph', 'clickData')
 )
-
 def update_map(click_data):
     fig = px.scatter_mapbox(df, 
                             lat='latitude', 
@@ -57,44 +55,11 @@ def update_map(click_data):
                             zoom=3, 
                             height=600,
                             size='size',
-                            color='size', # Use 'size' to color the points by the number of items lost
-                            color_continuous_scale='Blues', # Use a blue color scale for the color gradient
-                            mapbox_style='open-street-map')
-
-    # Set the color bar title to 'Items Lost'
-    fig.update_layout(coloraxis_colorbar=dict(title='Items Lost'))
-
-    # Use a custom hover template to remove the latitude and longitude information
-    fig.update_traces(hovertemplate='<b>%{hovertext}</b><br>Items Lost: %{marker.size}<extra></extra>')
-
-    # Hide the legend
-    fig.update_layout(showlegend=False)
-
-    # Increase the left and right margins to make the map wider
-    fig.update_layout(margin=dict(l=0, r=0))
-
-    # Add a background color to the map
-    fig.update_layout(mapbox=dict(style='stamen-terrain', bgcolor='#f8f8f8'))
-
-    # Add a circle around the selected point
-    if click_data is not None:
-        lat = click_data['points'][0]['lat']
-        lon = click_data['points'][0]['lon']
-        fig.add_trace(go.Scattermapbox(
-            mode='markers+text',
-            lat=[lat],
-            lon=[lon],
-            marker=dict(size=15, color='red'),
-            text=['Selected Point'],
-            textposition='bottom right'
-        ))
-
-    # Set the transition duration to 500 milliseconds
+                            color='nb_objects',
+                            color_continuous_scale=px.colors.sequential.RdBu,
+                            mapbox_style='white-bg')
     fig.update_layout(transition_duration=500)
-
     return fig
-
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
