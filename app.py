@@ -4,6 +4,9 @@ from dash import html
 import pandas as pd
 import plotly.express as px
 from dash.dependencies import Input, Output
+import boto3
+import io
+import os
 
 # Create the Dash app and define the external stylesheet
 external_stylesheets = ['style.css']
