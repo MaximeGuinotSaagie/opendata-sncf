@@ -56,36 +56,44 @@ df = pd.merge(df, size, on='fields.gc_obo_gare_origine_r_name')
 
 # Define the app layout
 app.layout = html.Div(
-    style=styles['container'],
+    className="container",
     children=[
-        html.H1("Lost and Found Records", style=styles['header']),
+        html.H1("Lost and Found Records"),
         html.Div(
+            className="stats-container",
             children=[
                 html.Div(
-                    style=styles['stat-item'],
+                    className="stat-item",
                     children=[
                         html.P(f"{len(df)}"),
-                        html.P("Total Records"),
+                        html.P("Nombre de lignes"),
                     ],
                 ),
                 html.Div(
-                    style=styles['stat-item'],
+                    className="stat-item",
                     children=[
                         html.P(f"{len(df['fields.gc_obo_gare_origine_r_name'].unique())}"),
-                        html.P("Total Unique Stations"),
+                        html.P("Nombre de gares"),
                     ],
                 ),
                 html.Div(
-                    style=styles['stat-item'],
+                    className="stat-item",
                     children=[
-                        html.P(f"{len(df['fields.gc_obo_type_c'].unique())}"),
-                        html.P("Total Unique Types"),
+                        html.P(f"Données depuis {df['record_timestamp'].min():%d-%m-%Y}"),
+                        html.P(""),
+                    ],
+                ),
+                html.Div(
+                    className="stat-item",
+                    children=[
+                        html.P(f"{df.groupby('fields.gc_obo_gare_origine_r_name').size().idxmax()}"),
+                        html.P("Gare avec le plus grand nombre d'objets trouvés"),
                     ],
                 ),
             ],
         ),
         html.Div(
-            style=styles['map-container'],
+            className="map-container",
             children=[
                 dcc.Graph(id="map-graph"),
             ],
