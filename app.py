@@ -19,9 +19,12 @@ s3 = boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secr
 df = pd.read_csv(f's3://{bucket}/objets-trouves-restitution.csv')
 
 
-# Compute the size and number of objects for each station
-grouped_df = df.groupby('fields.gc_obo_gare_origine_r_name').agg({'fields.gc_obo_type_c': 'count', 'size': 'first'}).reset_index()
-grouped_df = grouped_df.rename(columns={'fields.gc_obo_type_c': 'nb_objects'})
+# Compute the size of each group of stations
+size = df.groupby('fields.gc_obo_gare_origine_r_name').size().reset_index(name='size')
+
+# Merge the size information with the original DataFrame
+df = pd.merge(df, size, on='fields.gc_obo_gare_origine_r_name')
+
 
 
 # Merge the size information with the original DataFrame
