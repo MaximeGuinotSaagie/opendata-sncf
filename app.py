@@ -58,7 +58,7 @@ df = pd.merge(df, size, on='fields.gc_obo_gare_origine_r_name')
 app.layout = html.Div(
     className="container",
     children=[
-        html.H1("Lost and Found Records"),
+        html.H1("Objets perdus en Gare"),
         html.Div(
             className="stats-container",
             children=[
