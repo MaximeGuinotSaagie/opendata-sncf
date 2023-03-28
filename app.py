@@ -32,14 +32,14 @@ app = dash.Dash(__name__)
 app.layout = html.Div([
     html.H1('Lost and Found Records'),
     html.Div([
-        dcc.Graph(id='map-graph')
-    ], style={'width': '50%', 'display': 'inline-block'}),
-    html.Div([
         html.H2('Statistics'),
         html.P(f'Total records: {len(df)}'),
         html.P(f'Total unique stations: {len(df["fields.gc_obo_gare_origine_r_name"].unique())}'),
         html.P(f'Total unique types: {len(df["fields.gc_obo_type_c"].unique())}')
-    ], style={'width': '50%', 'display': 'inline-block', 'vertical-align': 'top'})
+    ], style={'width': '40%', 'display': 'inline-block', 'vertical-align': 'top'}),
+    html.Div([
+        dcc.Graph(id='map-graph')
+    ], style={'width': '60%', 'display': 'inline-block'})
 ])
 
 # Define the map graph
