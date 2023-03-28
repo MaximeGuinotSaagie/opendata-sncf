@@ -4,9 +4,10 @@ from dash import html
 import pandas as pd
 import plotly.express as px
 from dash.dependencies import Input, Output
-import boto3
-import io
-import os
+
+# Create the Dash app and define the external stylesheet
+external_stylesheets = ['style.css']
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 # Connect to S3 bucket
 bucket = "tnb-cust11"
@@ -26,22 +27,14 @@ size = df.groupby('fields.gc_obo_gare_origine_r_name').size().reset_index(name='
 df = pd.merge(df, size, on='fields.gc_obo_gare_origine_r_name')
 
 
-# Create the Dash app
-app = dash.Dash(__name__)
-
 # Define the app layout
 app.layout = html.Div(
     className="container",
     children=[
-        html.Link(
-            rel='stylesheet',
-            href='./style.css'
-        ),
         html.H1("Lost and Found Records"),
         html.Div(
             className="stats-container",
             children=[
-                html.H2("Statistics"),
                 html.Div(
                     className="stat-item",
                     children=[
@@ -101,4 +94,4 @@ def update_map(click_data):
 
 
 if __name__ == '__main__':
-     app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=True)

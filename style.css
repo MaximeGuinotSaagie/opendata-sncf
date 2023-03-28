@@ -89,3 +89,16 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.stats-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.stat-item {
+  flex: 1;
+  padding: 1.5rem;
+  background-color: #fff;
+ 
