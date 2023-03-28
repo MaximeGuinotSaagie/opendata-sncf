@@ -61,7 +61,8 @@ app.layout = html.Div(
     children=[
         html.H1("Objets perdus en Gare"),
         html.Div(
-            className="stats-container",
+            id="stats-container",
+            className="stats-container",,
             children=[
                 html.Div(
                     id="total-records",
