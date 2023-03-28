@@ -48,19 +48,20 @@ app.layout = html.Div([
     Input('map-graph', 'clickData')
 )
 def update_map(click_data):
-    fig = px.scatter_mapbox(df, 
+    fig = px.scatter_mapbox(grouped_df, 
                             lat='latitude', 
                             lon='longitude', 
                             hover_name='fields.gc_obo_gare_origine_r_name', 
                             zoom=3, 
                             height=600,
-                            size='nb_objects',
-                            color_continuous_scale=px.colors.sequential.Reds,
+                            size='size',
                             color='nb_objects',
-                            range_color=[0, df['nb_objects'].max()],
-                            opacity=0.7,
+                            color_continuous_scale=px.colors.sequential.Blues_r.reversed(),
                             mapbox_style='open-street-map')
-    fig.update_layout(transition_duration=500, coloraxis_showscale=False)
+    fig.update_layout(transition_duration=500)
+    fig.update_layout(coloraxis_colorbar=dict(title='Number of Objects'))
+    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+    fig.update_layout(showlegend=False)
     return fig
 
 if __name__ == '__main__':
