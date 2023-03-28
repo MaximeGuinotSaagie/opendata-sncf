@@ -31,6 +31,7 @@ app = dash.Dash(__name__)
 
 # Define the app layout
 app.layout = html.Div(
+    className="container",
     children=[
         html.Head(
             children=[
@@ -104,4 +105,4 @@ def update_map(click_data):
 
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', debug=True, port=8050)
+    app.run(host='0.0.0.0', debug=True)
