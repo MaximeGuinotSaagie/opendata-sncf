@@ -14,16 +14,15 @@ access_key=os.environ["AWS_ACCESS_KEY_ID"]
 secret_key=os.environ["AWS_SECRET_ACCESS_KEY"]
 
 s3 = boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secret_key)
-# Download the csv file
-#csv_obj = bucket.Object('objets-trouves-restitution.csv').get()['Body'].read().decode('utf-8')
-df = pd.read_csv(f's3://{bucket}/objets-trouves-restitution.csv')
-#df = pd.read_csv(io.StringIO(csv_obj))
 
-# Compute the size of each group of stations
-size = df.groupby('fields.gc_obo_gare_origine_r_name').size().reset_index(name='size')
+# Download the csv file
+df = pd.read_csv(f's3://{bucket}/objets-trouves-restitution.csv')
+
+# Compute the number of objects for each station
+df_size = df.groupby('fields.gc_obo_gare_origine_r_name').size().reset_index(name='nb_objects')
 
 # Merge the size information with the original DataFrame
-df = pd.merge(df, size, on='fields.gc_obo_gare_origine_r_name')
+df = pd.merge(df, df_size, on='fields.gc_obo_gare_origine_r_name')
 
 # Create the Dash app
 app = dash.Dash(__name__)
@@ -33,13 +32,13 @@ app.layout = html.Div([
     html.H1('Lost and Found Records'),
     html.Div([
         dcc.Graph(id='map-graph')
-    ], style={'width': '100%', 'display': 'inline-block'}),
+    ], style={'width': '50%', 'display': 'inline-block'}),
     html.Div([
         html.H2('Statistics'),
         html.P(f'Total records: {len(df)}'),
         html.P(f'Total unique stations: {len(df["fields.gc_obo_gare_origine_r_name"].unique())}'),
         html.P(f'Total unique types: {len(df["fields.gc_obo_type_c"].unique())}')
-    ], style={'width': '100%', 'display': 'inline-block', 'text-align': 'center'})
+    ], style={'width': '50%', 'display': 'inline-block', 'vertical-align': 'top'})
 ])
 
 # Define the map graph
@@ -54,11 +53,13 @@ def update_map(click_data):
                             hover_name='fields.gc_obo_gare_origine_r_name', 
                             zoom=3, 
                             height=600,
-                            size='size',
+                            size='nb_objects',
+                            color_continuous_scale=px.colors.sequential.Reds,
                             color='nb_objects',
-                            color_continuous_scale=px.colors.sequential.RdBu,
-                            mapbox_style='white-bg')
-    fig.update_layout(transition_duration=500)
+                            range_color=[0, df['nb_objects'].max()],
+                            opacity=0.7,
+                            mapbox_style='open-street-map')
+    fig.update_layout(transition_duration=500, coloraxis_showscale=False)
     return fig
 
 if __name__ == '__main__':
