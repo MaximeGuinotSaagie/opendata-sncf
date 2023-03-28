@@ -26,10 +26,6 @@ size = df.groupby('fields.gc_obo_gare_origine_r_name').size().reset_index(name='
 df = pd.merge(df, size, on='fields.gc_obo_gare_origine_r_name')
 
 
-
-# Merge the size information with the original DataFrame
-df = pd.merge(df, df_size, on='fields.gc_obo_gare_origine_r_name')
-
 # Create the Dash app
 app = dash.Dash(__name__)
 
