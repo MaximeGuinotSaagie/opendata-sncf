@@ -31,7 +31,6 @@ app = dash.Dash(__name__)
 
 # Define the app layout
 app.layout = html.Div(
-    className="container",
     children=[
         html.Head(
             children=[
