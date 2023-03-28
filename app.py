@@ -35,7 +35,7 @@ app.layout = html.Div(
     children=[
         html.Link(
             rel='stylesheet',
-            href='style.css'
+            href='./style.css'
         ),
         html.H1("Lost and Found Records"),
         html.Div(
