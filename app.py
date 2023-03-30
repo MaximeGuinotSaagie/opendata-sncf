@@ -7,6 +7,8 @@ from dash.dependencies import Input, Output
 import boto3
 import io
 import os
+from plotly import colors
+
 
 # Define the styles inline
 styles = {
